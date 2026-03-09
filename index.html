@@ -77,8 +77,8 @@
         </div>
     </div>
     <div class="text-center my-4">
-        <button class="btn btn-outline-secondary">取消</button>
-        <button class="btn btn-primary" id="ok_btn">送出</button>
+        <button class="btn btn-outline-secondary" id="cancel_btn">取消</button>
+        <button class="btn btn-primary" id="order_btn">送出</button>
     </div>
 
 
@@ -87,6 +87,7 @@
     <script>
         let flag_seatnumber = false;
         let $lastBox = null; // 記住上一個被填入座號的 box
+        let selectedArea = "";
 
         $(function () {
             // 使用者座號
@@ -108,6 +109,7 @@
                     if (confirm("是否清除此格的座號？")) {
                         $(this).find(".seat-tag").remove();
                         $lastBox = null; // 清除記錄
+                        selectedArea = "";
                     }
                     return;
                 }
@@ -124,18 +126,69 @@
                 // 將座號附加到 box 的文字後面
                 $(this).append(`<span class="seat-tag" style="color: red;"> ${seat}號</span>`);
                 $lastBox = $(this); // ← 記住目前這個 box
+                selectedArea = $(this).find("span").first().text().trim(); // ← 記錄區域名稱
+                console.log("選擇區域:", selectedArea);
             });
 
 
             // 確認鍵功能
-            $("#ok_btn").click(function () {
-                if (flag_seatnumber && flag_p_name && flag_p_ice) {
-                    let strHTML = `<h1>座號: ${$("#seatnumber").val()}</h1>`
-
-                    $("#showList").html(strHTML);
-                } else {
-                    alert("尚未選擇打掃區域!");
+            $("order_btn").click(function () {
+                if (flag_seatnumber) {
+                    alert("請先輸入有效座位號碼!");
+                    return;
                 }
+                if (selectedArea === "") {
+                    alert("請先選擇打掃區域");
+                    return;
+                }
+            });
+            
+            // 取消鍵功能
+            $("#cancel_btn").click(function () {
+                // 清除輸入框
+                $("#seatnumber").val("");
+                $("#seatnumber").removeClass("is-valid is-invalid");
+
+                // 清除 box 上的座號標籤
+                if ($lastBox !== null) {
+                    $lastBox.find(".seat-tag").remove();
+                    $lastBox = null;
+                }
+
+                // 重置旗標和區域
+                flag_seatnumber = false;
+                selectedArea = "";
+
+                alert("已清除！");
+            });
+
+
+            // 確認訂單監聽
+            $("#order_btn").click(function () {
+                // 收集傳遞至後端的訂單資料
+                let orderData = {
+                    seatnumber: $("#seatnumber").val(),
+                    area: selectedArea
+                };
+
+                console.log(orderData);
+                console.log(JSON.stringify(orderData));
+
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:3000/seatnumber",
+                    contentType: "application/json",
+                    data: JSON.stringify(orderData),
+                    success: function (data) {
+                        let strHTML = `<h1>座號: ${$("#seatnumber").val()} ／ 區域: ${selectedArea}</h1>`;
+                        $("#showList").html(strHTML);
+                        console.log(data);
+                        alert("新增成功");
+                    },
+                    error: function () {
+                        alert("新增失敗");
+                    }
+                });
             });
         });
 
