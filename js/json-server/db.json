@@ -1,4 +1,11 @@
 {
-  "seatnumber": [],
+  "seatnumber": [
+    {
+      "seatnumber": "25",
+      "area": "A1（石磚區）",
+      "group": "第三組",
+      "id": 1
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

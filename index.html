@@ -19,11 +19,14 @@
     <div class="title-02 text-center">
         打掃區域生效起訖日: <span>2026.03.28 ~ 2026.04.27</span>
     </div>
-    <div class="title-05 text-center">第一組</div>
+    <div class="title-03 text-center" id="group"></div>
 
     <hr>
 
     <div class="container">
+        <label for="" class="form-label" id="groupnumber">
+            組別:<span style = "color: red; margin: 10px;"></span>
+        </label>
         <label for="" class="form-label">使用者座位號碼:</label>
         <div class="mb-3 form-floating">
             <input type="text" class="form-control" placeholder="" id="seatnumber">
@@ -84,6 +87,7 @@
 
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/jquery-4.0.0.min.js"></script>
+    <script src="js/teammember.js"></script>
     <script>
         let flag_seatnumber = false;
         let $lastBox = null; // 記住上一個被填入座號的 box
@@ -92,15 +96,45 @@
         $(function () {
             // 使用者座號
             $("#seatnumber").blur(function () {
+                let inputLen = $(this).val().length;
+                let seat = parseInt($(this).val()); //轉成數字
+                let foundGroup = null;
+
                 console.log($(this).val().length);
-                if ($(this).val().length >= 1 && $(this).val().length <= 2) {
+                // if ($(this).val().length >= 1 && $(this).val().length <= 2) {
+                //     $(this).removeClass("is-invalid").addClass("is-valid");
+                //     flag_seatnumber = true;
+                // } else {
+                //     $(this).removeClass("is-valid").addClass("is-invalid");
+                //     flag_seatnumber = false;
+                    
+                // }
+
+                if (inputLen >= 1 && inputLen <= 2) {
                     $(this).removeClass("is-invalid").addClass("is-valid");
                     flag_seatnumber = true;
-                } else {
-                    $(this).removeClass("is-valid").addClass("is-invalid");
-                    flag_seatnumber = false;
+                    $("#group").text("");
+                    // 查詢座號對應組別
+                    
+                    for (let groupName in groupData) {
+                        if (groupData[groupName].seats.includes(seat)) {
+                            foundGroup = groupName;
+                            break;
+                        }
+                    }
                 }
-            })
+                // 更新畫面上的組別顯示
+                if (foundGroup) {
+                    $("#group").text(foundGroup);              // 更新頂部組別標題
+                    $("#groupnumber span").text(foundGroup);   // 更新 label 裡的 span
+                } else {
+                    $("#group").text("查無此座號");
+                    $("#groupnumber span").text("查無此座號");
+                }
+
+            });
+
+
             // 點擊已有座號的 box 時，詢問是否清除
             $(".box, .box02, .box03").click(function () {
                 let seat = $("#seatnumber").val();
@@ -124,25 +158,15 @@
                     $lastBox.find(".seat-tag").remove();
                 }
                 // 將座號附加到 box 的文字後面
-                $(this).append(`<span class="seat-tag" style="color: red;"> ${seat}號</span>`);
+                $(this).append(`<span class="seat-tag" style = "color: red;" > ${seat}號</span > `);
                 $lastBox = $(this); // ← 記住目前這個 box
                 selectedArea = $(this).find("span").first().text().trim(); // ← 記錄區域名稱
                 console.log("選擇區域:", selectedArea);
             });
 
 
-            // 確認鍵功能
-            $("order_btn").click(function () {
-                if (flag_seatnumber) {
-                    alert("請先輸入有效座位號碼!");
-                    return;
-                }
-                if (selectedArea === "") {
-                    alert("請先選擇打掃區域");
-                    return;
-                }
-            });
-            
+
+
             // 取消鍵功能
             $("#cancel_btn").click(function () {
                 // 清除輸入框
@@ -161,14 +185,21 @@
 
                 alert("已清除！");
             });
-
-
-            // 確認訂單監聽
+            // 確認鍵功能
             $("#order_btn").click(function () {
+                if (!flag_seatnumber) {
+                    alert("請先輸入有效座位號碼!");
+                    return;
+                }
+                if (selectedArea === "") {
+                    alert("請先選擇打掃區域");
+                    return;
+                }
                 // 收集傳遞至後端的訂單資料
                 let orderData = {
                     seatnumber: $("#seatnumber").val(),
-                    area: selectedArea
+                    area: selectedArea,
+                    group: $("#groupnumber span").text()
                 };
 
                 console.log(orderData);
@@ -180,17 +211,18 @@
                     contentType: "application/json",
                     data: JSON.stringify(orderData),
                     success: function (data) {
-                        let strHTML = `<h1>座號: ${$("#seatnumber").val()} ／ 區域: ${selectedArea}</h1>`;
-                        $("#showList").html(strHTML);
+                        let strHTML = `<h1> 座號: ${$("#seatnumber").val()} ／ 區域: ${selectedArea}</h1>`;
                         console.log(data);
                         alert("新增成功");
                     },
                     error: function () {
                         alert("新增失敗");
                     }
+
                 });
             });
         });
+
 
     </script>
 </body>
