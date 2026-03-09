@@ -25,7 +25,7 @@
 
     <div class="container">
         <label for="" class="form-label" id="groupnumber">
-            組別:<span style = "color: red; margin: 10px;"></span>
+            組別:<span style="color: red; margin: 10px;"></span>
         </label>
         <label for="" class="form-label">使用者座位號碼:</label>
         <div class="mb-3 form-floating">
@@ -107,7 +107,7 @@
                 // } else {
                 //     $(this).removeClass("is-valid").addClass("is-invalid");
                 //     flag_seatnumber = false;
-                    
+
                 // }
 
                 if (inputLen >= 1 && inputLen <= 2) {
@@ -115,14 +115,21 @@
                     flag_seatnumber = true;
                     $("#group").text("");
                     // 查詢座號對應組別
-                    
+
                     for (let groupName in groupData) {
                         if (groupData[groupName].seats.includes(seat)) {
                             foundGroup = groupName;
                             break;
                         }
                     }
+                } else {
+                    // 格式不符時組別:清空
+                    $(this).removeClass("is-valid").addClass("is-invalid");
+                    flag_seatnumber = false;
+                    $("#group").text("");
+                    $("#groupnumber span").text("");
                 }
+
                 // 更新畫面上的組別顯示
                 if (foundGroup) {
                     $("#group").text(foundGroup);              // 更新頂部組別標題
@@ -182,6 +189,8 @@
                 // 重置旗標和區域
                 flag_seatnumber = false;
                 selectedArea = "";
+                $("#group").text("");
+                $("#groupnumber span").text("");
 
                 alert("已清除！");
             });
