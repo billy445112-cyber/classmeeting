@@ -1,0 +1,54 @@
+        /* 通用設計 */
+        .box {
+            border: 2px solid;
+            border-radius: 8px;
+            padding: 0.55rem 0.8rem;
+            font-size: 0.88rem;
+            color: black;
+            font-weight: 500;
+            transition: transform 0.15s, box-shadow 0.15s;
+            cursor: default;
+        }
+
+        .box02 {
+            border: 2px solid;
+            border-radius: 8px;
+            padding: 0.55rem 0.8rem;
+            font-size: 0.88rem;
+            color: black;
+            font-weight: 500;
+            transition: transform 0.15s, box-shadow 0.15s;
+            cursor: default;
+            grid-column: 1 / 3;
+        }
+
+        .box03 {
+            border: 2px solid;
+            border-radius: 8px;
+            padding: 0.55rem 0.8rem;
+            font-size: 0.88rem;
+            color: black;
+            font-weight: 500;
+            transition: transform 0.15s, box-shadow 0.15s;
+            cursor: default;
+            grid-column: 3;
+            grid-row: 1/4;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+        }
+
+        .box02:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+        }
+
+        .box03:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+        }

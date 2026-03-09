@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班務會議</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/mycss01.css">
+    <link rel="stylesheet" href="css/outdoor.css">
+    <link rel="stylesheet" href="css/indoor.css">
+    <link rel="stylesheet" href="css/box_&_hover.css">
+</head>
+
+
+<body>
+    <div class="title-01 text-center">2026年03月19日 星期四</div>
+    <div class="title-02 text-center">2026.3.19 班會</div>
+    <div class="title-02 text-center">
+        打掃區域生效起訖日: <span>2026.03.28 ~ 2026.04.27</span>
+    </div>
+    <div class="title-05 text-center">第一組</div>
+
+    <hr>
+
+    <div class="container">
+        <label for="" class="form-label">使用者座位號碼:</label>
+        <div class="mb-3 form-floating">
+            <input type="text" class="form-control" placeholder="" id="seatnumber">
+            <label for="" class="form-label">(1~2位數)</label>
+            <div class="valid-feedback">符合規定</div>
+            <div class="invalid-feedback">不符合規定</div>
+        </div>
+        <div class="row">
+            <!-- 室外 -->
+            <div class="title-05 text-center">室外</div>
+            <div class="outdoor-grid">
+                <div class="box bg-primary">
+                    <span>
+                        A1（石磚區）
+                    </span>
+                </div>
+                <div class="box bg-primary">
+                    <span>
+                        A2（石磚區）
+                    </span>
+                </div>
+                <div class="box03 bg-primary">
+                    <span>
+                        A5（含走廊樓梯）
+                    </span>
+                </div>
+                <div class="box bg-primary">
+                    <span>
+                        A3（石磚區）
+                    </span>
+                </div>
+                <div class="box bg-primary">
+                    <span>
+                        A4（石磚區）
+                    </span>
+                </div>
+                <div class="box02 bg-primary">
+                    <span>
+                        A6（垃圾袋）
+                    </span>
+                </div>
+            </div>
+        </div>
+        <!-- 室內 -->
+        <div class="title-05 text-center">室內</div>
+        <div class="indoor-grid">
+            <div class="box bg-info">B1（黑板＋櫃子）</div>
+            <div class="box bg-info">B2（拖地 教室前半）</div>
+            <div class="box bg-info">B3（拖地 教室後半）</div>
+            <div class="box bg-info">B4（掃地全教室）</div>
+        </div>
+    </div>
+
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-4.0.0.min.js"></script>
+    <script>
+        let flag_seatnumber = false;
+        let $lastBox = null; // 記住上一個被填入座號的 box
+
+        $(function () {
+            // 使用者座號
+            $("#seatnumber").blur(function () {
+                console.log($(this).val().length);
+                if ($(this).val().length >= 1 && $(this).val().length <= 2) {
+                    $(this).removeClass("is-invalid").addClass("is-valid");
+                    flag_seatnumber = true;
+                } else {
+                    $(this).removeClass("is-valid").addClass("is-invalid");
+                    flag_seatnumber = false;
+                }
+            })
+            // 點擊已有座號的 box 時，詢問是否清除
+            $(".box, .box02, .box03").click(function () {
+                let seat = $("#seatnumber").val();
+
+                if ($(this).find(".seat-tag").length > 0) {
+                    if (confirm("是否清除此格的座號？")) {
+                        $(this).find(".seat-tag").remove();
+                        $lastBox = null; // 清除記錄
+                    }
+                    return;
+                }            
+                        
+                // 尚未輸入有效座號
+                if (seat === "" || !flag_seatnumber) {
+                    alert('請先輸入有效座位號碼!');
+                    return;
+                }
+                //若之前有填過其他 box，先把那個 box 的座號移除
+                if($lastBox !== null){
+                    $lastBox.find(".seat-tag").remove();
+                }                
+                // 將座號附加到 box 的文字後面
+                $(this).append(`<span class="seat-tag" style="color: red;"> ${seat}號</span>`);
+                $lastBox = $(this); // ← 記住目前這個 box
+            });
+            
+        });
+
+
+    </script>
+</body>
+
+</html>
